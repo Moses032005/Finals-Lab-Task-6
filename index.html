@@ -1,1 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finals Lab Task 6 - MongoDB CRUD</title>
+    <style>
+        /* Binary Rain Background Styles */
+        body {
+            background-color: #000 !important;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        #binary-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(1.2ch, 1fr));
+            grid-auto-rows: 1.2em;
+            overflow: hidden;
+            z-index: -1;
+            background-color: #000;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .binary-digit {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+            opacity: 0.8;
+            animation: fadeIn 0.5s forwards;
+            line-height: 1;
+            color: #0f0;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 0.8; }
+        }
+
+        /* Content Styles */
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: rgba(20, 20, 20, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+            position: relative;
+            border: 1px solid #333;
+            font-family: 'Arial', sans-serif;
+        }
+        header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid #ffeb3b;
+            font-family: 'Arial', sans-serif;
+        }
+        h1, h2, h3 {
+            color: #ffeb3b;
+            font-family: 'Arial', sans-serif;
+        }
+        .steps {
+            background: rgba(40, 40, 40, 0.9);
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #ffeb3b;
+            font-family: 'Arial', sans-serif;
+            margin-bottom: 20px;
+        }
+        .steps ul {
+            list-style-type: none;
+            padding-left: 0;
+            font-family: 'Arial', sans-serif;
+        }
+        .steps li {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+        }
+        .steps li::before {
+            content: "✔";
+            color: #ffeb3b;
+            font-size: 20px;
+            position: absolute;
+            left: 0;
+            top: 2px;
+            font-family: 'Arial', sans-serif;
+        }
+        .images {
+            text-align: center;
+            margin-top: 20px;
+            font-family: 'Arial', sans-serif;
+        }
+        .images img {
+            max-width: 100%;
+            border-radius: 5px;
+            margin-top: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.8);
+            border: 1px solid #333;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 2px solid #444;
+            margin-top: 30px;
+            color: #aaa;
+            font-family: 'Arial', sans-serif;
+        }
+        .portfolio-link {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 15px;
+            background-color: #ffeb3b;
+            color: #222;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            font-family: 'Arial', sans-serif;
+        }
+        .portfolio-link:hover {
+            background-color: #ffc107;
+        }
+        p {
+            color: #ddd;
+            font-family: 'Arial', sans-serif;
+        }
+        .code-block {
+            background-color: #222;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            color: #0f0;
+            margin: 15px 0;
+        }
+        .task-divider {
+            border-top: 3px solid #ffeb3b;
+            margin: 40px 0;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Binary Rain Background -->
+    <div id="binary-rain"></div>
+
+    <!-- Content Container -->
+    <div class="container">
+        <header>
+            <h1>Finals Lab Task 6</h1>
+            <p>MongoDB CRUD Operations</p>
+        </header>
+
+        <section>
+            <h2>CRUD Operations Steps</h2>
+            
+            <div class="steps">
+                <h3>Step 1: Create a Database</h3>
+                <ul>
+                    <li>Create or switch to a specific database</li>
+                    <li>The selected database becomes the active workspace</li>
+                </ul>
+                
+                <h3>Step 2: Insert Documents</h3>
+                <ul>
+                    <li>Create a collection within the database</li>
+                    <li>Insert multiple documents with structured data fields</li>
+                </ul>
+                
+                <h3>Step 3: FIND Documents</h3>
+                <ul>
+                    <li>Display all documents in the collection</li>
+                    <li>Use filters to find specific documents</li>
+                </ul>
+                
+                <h3>Step 4: UPDATE Documents</h3>
+                <ul>
+                    <li>Locate documents needing modification</li>
+                    <li>Specify fields to change and apply updates</li>
+                    <li>Confirm the updates</li>
+                </ul>
+                
+                <h3>Step 5: SEARCH Documents</h3>
+                <ul>
+                    <li>Use criteria to locate matching documents</li>
+                    <li>Review matched results</li>
+                </ul>
+                
+                <h3>Step 6: DELETE Documents</h3>
+                <ul>
+                    <li>Identify documents to remove</li>
+                    <li>Remove documents from collection</li>
+                    <li>Verify deletion</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="task-divider"></div>
+
+        <section>
+            <h2>Query Screenshots</h2>
+            <div class="images">
+                <img src="https://github.com/Moses032005/EDM_Moses-David/raw/main/Finals%20Lab%20Task%206/Images/6.1.png" alt="Query Screenshot 1">
+                <img src="https://github.com/Moses032005/EDM_Moses-David/raw/main/Finals%20Lab%20Task%206/Images/6.2.png" alt="Query Screenshot 2">
+                <img src="https://github.com/Moses032005/EDM_Moses-David/raw/main/Finals%20Lab%20Task%206/Images/6.3.png" alt="Query Screenshot 3">
+                <img src="https://github.com/Moses032005/EDM_Moses-David/raw/main/Finals%20Lab%20Task%206/Images/6.4.png" alt="Query Screenshot 4">
+                <img src="https://github.com/Moses032005/EDM_Moses-David/raw/main/Finals%20Lab%20Task%206/Images/6.5.png" alt="Query Screenshot 5">
+                <img src="https://github.com/Moses032005/EDM_Moses-David/raw/main/Finals%20Lab%20Task%206/Images/6.6.png" alt="Query Screenshot 6">
+                <img src="https://github.com/Moses032005/EDM_Moses-David/raw/main/Finals%20Lab%20Task%206/Images/6.7.png" alt="Query Screenshot 7">
+                <img src="https://github.com/Moses032005/EDM_Moses-David/raw/main/Finals%20Lab%20Task%206/Images/6.8.png" alt="Query Screenshot 8">
+            </div>
+        </section>
+
+        <div class="task-divider"></div>
+
+        <section>
+            <h2>Update Documents Screenshots</h2>
+            <div class="images">
+                <img src="https://github.com/Moses032005/EDM_Moses-David/raw/main/Finals%20Lab%20Task%206/Images/6.9.png" alt="Update Screenshot 1">
+                <img src="https://github.com/Moses032005/EDM_Moses-David/raw/main/Finals%20Lab%20Task%206/Images/6.10.png" alt="Update Screenshot 2">
+                <img src="https://github.com/Moses032005/EDM_Moses-David/raw/main/Finals%20Lab%20Task%206/Images/6.11.png" alt="Update Screenshot 3">
+            </div>
+        </section>
+
+        <div class="task-divider"></div>
+
+        <section>
+            <h2>Text Search Screenshots</h2>
+            <div class="images">
+                <img src="https://github.com/Moses032005/EDM_Moses-David/raw/main/Finals%20Lab%20Task%206/Images/6.12.png" alt="Text Search 1">
+                <img src="https://github.com/Moses032005/EDM_Moses-David/raw/main/Finals%20Lab%20Task%206/Images/6.13.png" alt="Text Search 2">
+                <img src="https://github.com/Moses032005/EDM_Moses-David/raw/main/Finals%20Lab%20Task%206/Images/6.14.png" alt="Text Search 3">
+                <img src="https://github.com/Moses032005/EDM_Moses-David/raw/main/Finals%20Lab%20Task%206/Images/6.15.png" alt="Text Search 4">
+                <img src="https://github.com/Moses032005/EDM_Moses-David/raw/main/Finals%20Lab%20Task%206/Images/6.16.png" alt="Text Search 5">
+            </div>
+        </section>
+
+        <div class="task-divider"></div>
+
+        <section>
+            <h2>Delete Documents Screenshots</h2>
+            <div class="images">
+                <img src="https://github.com/Moses032005/EDM_Moses-David/raw/main/Finals%20Lab%20Task%206/Images/6.17.png" alt="Delete Screenshot 1">
+                <img src="https://github.com/Moses032005/EDM_Moses-David/raw/main/Finals%20Lab%20Task%206/Images/6.18.png" alt="Delete Screenshot 2">
+            </div>
+        </section>
+
+        <footer>
+            <p>Finals Lab Task 6 | MongoDB CRUD | BSIS Student</p>
+            <a href="https://moses032005.github.io/EDM_Moses-David/" class="portfolio-link">Back to Portfolio</a>
+            <p>Documentation: <a href="https://github.com/user-attachments/files/20257051/MongoDB.Practice.Task.moses.1.docx">Download MongoDB Practice Task</a></p>
+        </footer>
+    </div>
+
+    <script>
+        // Binary Rain Configuration
+        const config = {
+            fontSize: 20,
+            updateInterval: 50,
+            changeProbability: 0.3
+        };
+        
+        const container = document.getElementById('binary-rain');
+        let digits = [];
+        let columns = 0;
+        let rows = 0;
+        
+        function calculateGrid() {
+            const testChar = document.createElement('div');
+            testChar.textContent = '0';
+            testChar.style.position = 'absolute';
+            testChar.style.visibility = 'hidden';
+            testChar.style.fontSize = `${config.fontSize}px`;
+            testChar.style.fontFamily = 'Courier New, monospace';
+            document.body.appendChild(testChar);
+            
+            const charWidth = testChar.offsetWidth;
+            const charHeight = testChar.offsetHeight;
+            document.body.removeChild(testChar);
+            
+            columns = Math.ceil(window.innerWidth / charWidth);
+            rows = Math.ceil(window.innerHeight / charHeight);
+            
+            const perfectFontSizeWidth = window.innerWidth / columns;
+            const perfectFontSizeHeight = window.innerHeight / rows;
+            const perfectFontSize = Math.min(perfectFontSizeWidth, perfectFontSizeHeight);
+            
+            container.style.fontSize = `${perfectFontSize}px`;
+            container.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+            container.style.gridAutoRows = `1fr`;
+        }
+        
+        function init() {
+            calculateGrid();
+            
+            for (let i = 0; i < columns * rows; i++) {
+                const digit = document.createElement('div');
+                digit.className = 'binary-digit';
+                digit.textContent = Math.random() > 0.5 ? '1' : '0';
+                container.appendChild(digit);
+                digits.push(digit);
+            }
+            
+            setInterval(animate, config.updateInterval);
+        }
+        
+        function animate() {
+            digits.forEach(digit => {
+                if (Math.random() < config.changeProbability) {
+                    digit.textContent = Math.random() > 0.5 ? '1' : '0';
+                    digit.style.opacity = 0;
+                    digit.style.animation = 'none';
+                    void digit.offsetWidth;
+                    digit.style.animation = 'fadeIn 0.5s forwards';
+                }
+            });
+        }
+        
+        function handleResize() {
+            calculateGrid();
+            
+            container.innerHTML = '';
+            digits = [];
+            
+            for (let i = 0; i < columns * rows; i++) {
+                const digit = document.createElement('div');
+                digit.className = 'binary-digit';
+                digit.textContent = Math.random() > 0.5 ? '1' : '0';
+                container.appendChild(digit);
+                digits.push(digit);
+            }
+        }
+        
+        window.addEventListener('load', init);
+        window.addEventListener('resize', handleResize);
+    </script>
+</body>
+</html>
